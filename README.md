@@ -10,7 +10,7 @@ Permainan latihan kognitif (ejaan suku kata) + senaman fizikal untuk Unit Fisiot
 2. **Baling Dadu Kategori**: 1 & 4 = Kenderaan 🚗, 2 & 5 = Makanan 🍜, 3 & 6 = Tempat 🏫.
 3. Eja perkataan penuh huruf demi huruf (kiri → kanan) guna papan kekunci A–Z. Gambar emoji jadi petunjuk.
 4. Salah huruf → **Dadu Hukuman**: 1 Duduk-Berdiri · 2 Angkat Tumit · 3 Angkat Peha · 4 Cangkung · 5 & 6 Baling Semula.
-   Ulangan = tahap kognitif (boleh darab ×2/×3/×5 di skrin mula). Tekan **Siap 1 Ulangan** setiap kali, kemudian sambung ejaan.
+   Ulangan = bilangan huruf dalam ayat penuh (semua perkataan dalam pusingan), atau perkataan semasa sahaja (pilih di skrin mula). Tekan **Siap 1 Ulangan** setiap kali, kemudian sambung ejaan.
 5. **🏁 Tamat Sesi** untuk ringkasan (perkataan siap, kesilapan, set & ulangan setiap senaman, tempoh).
 
 ## Ubah suai

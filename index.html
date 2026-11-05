@@ -278,12 +278,10 @@ h2{font-size:var(--fs-l);text-align:center;font-weight:900}
       </button>
     </div>
     <div class="settings">
-      <label for="selMult">Ulangan senaman setiap hukuman:</label>
-      <select id="selMult">
-        <option value="1">Ikut tahap (1 / 2 / 3)</option>
-        <option value="2">Tahap × 2 (2 / 4 / 6)</option>
-        <option value="3">Tahap × 3 (3 / 6 / 9)</option>
-        <option value="5">Tahap × 5 (5 / 10 / 15)</option>
+      <label for="selReps">Ulangan setiap hukuman = bilangan huruf:</label>
+      <select id="selReps">
+        <option value="round">Semua perkataan dalam pusingan (ayat penuh)</option>
+        <option value="word">Perkataan yang sedang dieja sahaja</option>
       </select>
     </div>
     <button class="btn" id="btnStart" disabled>▶ Mula</button>
@@ -435,7 +433,7 @@ const NUM_BM = ['kosong','satu','dua','tiga','empat','lima','enam','tujuh','lapa
 
 /* ================= STATE ================= */
 const S = {
-  level: 0, mult: 1, cat: null, words: [], wi: 0, word: null, pos: 0,
+  level: 0, repMode: 'round', cat: null, words: [], wi: 0, word: null, pos: 0,
   busy: false, recent: [], exId: null, repsNeeded: 1, repsDone: 0,
   stats: { words:0, miss:0, reps:0, ex:{1:0,2:0,3:0,4:0}, exSets:{1:0,2:0,3:0,4:0}, start:0, list:[] },
   sound: true, voice: true,
@@ -444,7 +442,7 @@ const store = {
   get(k,d){ try{ const v = localStorage.getItem('dicecise.'+k); return v===null?d:JSON.parse(v);}catch(e){return d;} },
   set(k,v){ try{ localStorage.setItem('dicecise.'+k, JSON.stringify(v)); }catch(e){} },
 };
-S.sound = store.get('sound', true); S.voice = store.get('voice', true); S.mult = store.get('mult', 1);
+S.sound = store.get('sound', true); S.voice = store.get('voice', true); S.repMode = store.get('repMode', 'round') === 'word' ? 'word' : 'round';
 
 const $ = id => document.getElementById(id);
 const rand = n => Math.floor(Math.random()*n);
@@ -555,8 +553,8 @@ document.querySelectorAll('.level').forEach(b => b.addEventListener('click', () 
   S.level = +b.dataset.level; $('btnStart').disabled = false;
   sfx.ding(); say('Tahap ' + NUM_BM[S.level]);
 }));
-$('selMult').value = String(S.mult);
-$('selMult').addEventListener('change', e => { S.mult = +e.target.value; store.set('mult', S.mult); });
+$('selReps').value = S.repMode;
+$('selReps').addEventListener('change', e => { S.repMode = e.target.value; store.set('repMode', S.repMode); });
 $('btnStart').addEventListener('click', () => {
   ac();
   S.stats = { words:0, miss:0, reps:0, ex:{1:0,2:0,3:0,4:0}, exSets:{1:0,2:0,3:0,4:0}, start:Date.now(), list:[] };
@@ -668,8 +666,10 @@ $('btnEnd').addEventListener('click', showSummary);
 
 /* ================= PENALTY ================= */
 function goPenalty(){
-  S.repsNeeded = S.level * S.mult;
-  $('penReps').textContent = `Ulangan: ${S.repsNeeded}`;
+  // Bilangan ulangan = bilangan huruf dalam ayat (semua perkataan pusingan) atau perkataan semasa
+  const src = S.repMode === 'word' ? S.word.text : S.words.map(w => w.text).join(' ');
+  S.repsNeeded = src.replace(/ /g,'').length;
+  $('penReps').textContent = `Ulangan: ${S.repsNeeded} (${src} = ${S.repsNeeded} huruf)`;
   $('penResult').textContent=''; $('penResult').classList.remove('show');
   $('btnRollPen').hidden=false; $('btnRollPen').disabled=false; $('btnToEx').hidden=true;
   show('scrPen');
