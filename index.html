@@ -9,7 +9,7 @@
 :root{
   --bg:#0f2140; --panel:#1a3463; --panel2:#244785; --text:#ffffff; --muted:#c9d6f0;
   --yellow:#ffd23f; --green:#2ee07a; --red:#ff4d5e; --orange:#ff8c1a; --blue:#4cc9f0; --purple:#b48cff;
-  --radius:22px;
+  --radius:22px; color-scheme:dark;
   --fs-xl:clamp(2.6rem,6vw,5.5rem);
   --fs-l:clamp(1.6rem,3.4vw,3rem);
   --fs-m:clamp(1.2rem,2.2vw,2rem);
@@ -30,7 +30,7 @@ button:focus-visible{outline:5px solid var(--yellow);outline-offset:3px}
 header{
   display:flex;align-items:center;gap:12px;flex-wrap:wrap;
   padding:10px 18px;background:rgba(0,0,0,.28);border-bottom:3px solid rgba(255,255,255,.08);
-  position:sticky;top:0;z-index:20;
+  position:sticky;top:env(safe-area-inset-top,0px);z-index:20;
 }
 .logo{font-weight:900;font-size:var(--fs-m);letter-spacing:.5px}
 .logo span{color:var(--yellow)}
@@ -40,7 +40,7 @@ header{
 .tool{background:var(--panel2);font-size:1.5rem;width:56px;height:56px;border-radius:16px}
 .tool.off{opacity:.4}
 
-main{padding:18px;max-width:1500px;margin:0 auto;min-height:calc(100vh - 80px)}
+main{padding-block:18px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));max-width:1500px;margin:0 auto;min-height:calc(100vh - 80px)}
 .screen{display:none;flex-direction:column;align-items:center;gap:22px;animation:fadeIn .35s ease}
 .screen.active{display:flex}
 @keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
@@ -794,7 +794,7 @@ function showSummary(){
   show('scrSum'); if(st.words) { sfx.win(); confetti(50); }
 }
 $('btnAgain').addEventListener('click', () => show('scrStart'));
-$('btnHome').addEventListener('click', () => { if(confirm('Tamat sesi dan lihat ringkasan?')) showSummary(); });
+$('btnHome').addEventListener('click', showSummary);
 
 /* ================= TOOLS ================= */
 $('btnSound').addEventListener('click', () => { S.sound=!S.sound; store.set('sound',S.sound); syncTools(); if(S.sound){ ac(); sfx.ding(); } toast(S.sound?'Bunyi: ON':'Bunyi: OFF'); });
@@ -804,7 +804,7 @@ $('btnVoice').addEventListener('click', () => { S.voice=!S.voice; store.set('voi
   if(S.voice) say('Dice-cise'); });
 $('btnFull').addEventListener('click', () => {
   const d = document, el = d.documentElement;
-  if(!(d.fullscreenElement||d.webkitFullscreenElement)) (el.requestFullscreen||el.webkitRequestFullscreen||(()=>{})).call(el);
+  if(!(d.fullscreenElement||d.webkitFullscreenElement)) { try{ const r=(el.requestFullscreen||el.webkitRequestFullscreen||(()=>{})).call(el); if(r&&r.catch) r.catch(()=>toast('Skrin penuh tidak disokong di sini')); }catch(e){} }
   else (d.exitFullscreen||d.webkitExitFullscreen||(()=>{})).call(d);
 });
 // Papan kekunci fizikal (untuk PC / remote TV dengan keyboard)
