@@ -76,7 +76,7 @@ h2{font-size:var(--fs-l);text-align:center;font-weight:900}
 .level .name{font-size:var(--fs-m);font-weight:900}
 .level .desc{font-size:var(--fs-s);color:var(--muted)}
 .level .boxes{display:flex;gap:6px}
-.level .boxes i{width:34px;height:34px;border-radius:8px;background:#fff;display:block}
+.level .boxes i{width:48px;height:28px;border-radius:8px;background:#fff;display:block}
 .level .boxes i.e{background:transparent;border:4px dashed var(--yellow)}
 .l1 .num{color:var(--green)} .l2 .num{color:var(--yellow)} .l3 .num{color:var(--red)}
 
@@ -122,7 +122,7 @@ h2{font-size:var(--fs-l);text-align:center;font-weight:900}
 /* ---------- WORD SCREEN ---------- */
 .word-wrap{width:100%;display:grid;gap:22px;grid-template-columns:1fr}
 @media (orientation:landscape) and (min-width:960px){
-  .word-wrap{grid-template-columns:minmax(380px,1fr) minmax(460px,1.15fr);align-items:start}
+  .word-wrap{grid-template-columns:minmax(0,1.3fr) minmax(380px,1fr);align-items:start}
 }
 .card{background:var(--panel);border-radius:28px;padding:22px;display:flex;flex-direction:column;align-items:center;gap:18px}
 .chip{font-size:var(--fs-s);font-weight:900;padding:8px 18px;border-radius:999px;background:var(--yellow);color:#2b2100}
@@ -169,6 +169,28 @@ h2{font-size:var(--fs-l);text-align:center;font-weight:900}
 .kb-block{width:100%;display:flex;flex-direction:column;gap:8px;padding:14px;border-radius:20px;border:4px solid transparent;transition:border-color .2s,background .2s}
 .kb-block.live{border-color:var(--blue);background:rgba(76,201,240,.08)}
 
+.progress{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;align-items:center;font-weight:900;font-size:var(--fs-s)}
+.progress .pw{padding:6px 14px;border-radius:999px;background:rgba(255,255,255,.08);color:var(--muted)}
+.progress .pw.now{background:var(--blue);color:#032330}
+.progress .pw.ok{background:var(--green);color:#06241a}
+.let-row{width:100%;container-type:inline-size;display:flex;justify-content:center;gap:6px;flex-wrap:nowrap}
+.let{
+  flex:0 1 auto;width:min(96px,calc((100cqw - 6px*var(--n) - 10px*var(--b)) / var(--n)));
+  height:calc(min(96px,(100cqw - 6px*var(--n) - 10px*var(--b)) / var(--n)) * 1.2);
+  font-size:calc(min(96px,(100cqw - 6px*var(--n) - 10px*var(--b)) / var(--n)) * .62);
+  border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:900;
+  background:rgba(255,255,255,.08);color:#fff;border:4px dashed rgba(255,255,255,.55);
+}
+.let.sb{margin-left:10px}
+.let.active{border:5px solid var(--yellow);background:rgba(255,210,63,.18);box-shadow:0 0 24px rgba(255,210,63,.55);animation:glow 1.2s ease-in-out infinite}
+.let.done{background:var(--green);color:#06241a;border:4px solid var(--green)}
+.let .new{display:inline-block;animation:pop .45s cubic-bezier(.2,1.6,.4,1)}
+.let.wrong{border-color:var(--red)!important;background:rgba(255,77,94,.3)!important}
+.kb.alpha{grid-template-columns:repeat(7,1fr)}
+.kb.alpha .key.v{background:var(--yellow);box-shadow:0 6px 0 #c79c00;color:#2b2100}
+.win-list{display:flex;flex-direction:column;gap:6px;align-items:center}
+.win-list div{font-size:clamp(2.2rem,6vw,4.6rem);font-weight:900;letter-spacing:3px;color:var(--green);line-height:1.1;text-align:center}
+
 /* ---------- PENALTY / EXERCISE ---------- */
 .pen-head{font-size:var(--fs-xl);font-weight:900;color:var(--orange);text-align:center;line-height:1.05}
 .reps-badge{font-size:var(--fs-m);font-weight:900;background:var(--orange);color:#2a1300;padding:10px 22px;border-radius:999px}
@@ -206,7 +228,7 @@ h2{font-size:var(--fs-l);text-align:center;font-weight:900}
 .toast.show{opacity:1}
 
 @media (max-width:600px){
-  .kb.cons{grid-template-columns:repeat(5,1fr)}
+  .kb.alpha{grid-template-columns:repeat(6,1fr)}
   .btn{padding:16px 28px}
   .tool{width:48px;height:48px}
   header{position:static}
@@ -236,23 +258,23 @@ h2{font-size:var(--fs-l);text-align:center;font-weight:900}
   <!-- 1. START -->
   <section class="screen active" id="scrStart">
     <h1 class="title"><span class="d">Dice</span>-<span class="c">cise</span></h1>
-    <p class="subtitle">Baling dadu, eja suku kata, dan bersenam! 🎲🔤💪</p>
+    <p class="subtitle">Baling dadu, eja perkataan, dan bersenam! 🎲🔤💪</p>
     <h2>Pilih Tahap Kognitif</h2>
     <div class="levels">
       <button class="level l1" data-level="1">
         <div class="num">1</div><div class="name">Rendah</div>
-        <div class="boxes"><i></i><i></i><i class="e"></i></div>
-        <div class="desc">Selesaikan <b>1</b> suku kata</div>
+        <div class="boxes"><i class="e"></i></div>
+        <div class="desc">Eja <b>1</b> patah perkataan</div>
       </button>
       <button class="level l2" data-level="2">
         <div class="num">2</div><div class="name">Sederhana</div>
-        <div class="boxes"><i></i><i class="e"></i><i class="e"></i></div>
-        <div class="desc">Selesaikan <b>2</b> suku kata</div>
+        <div class="boxes"><i class="e"></i><i class="e"></i></div>
+        <div class="desc">Eja <b>2</b> patah perkataan</div>
       </button>
       <button class="level l3" data-level="3">
         <div class="num">3</div><div class="name">Tinggi</div>
         <div class="boxes"><i class="e"></i><i class="e"></i><i class="e"></i></div>
-        <div class="desc">Selesaikan <b>3</b> suku kata</div>
+        <div class="desc">Eja <b>3</b> patah perkataan</div>
       </button>
     </div>
     <div class="settings">
@@ -287,22 +309,15 @@ h2{font-size:var(--fs-l);text-align:center;font-weight:900}
     <div class="word-wrap">
       <div class="card">
         <div class="chip" id="wCat">Kenderaan</div>
+        <div class="progress" id="wProg"></div>
         <div class="picture" id="wPic">🚗</div>
-        <div class="syl-row" id="wSyl"></div>
-        <div class="step-info">
-          <div class="step" id="stepA">A · Konsonan</div>
-          <div class="step" id="stepB">B · Vokal</div>
-        </div>
+        <div class="let-row" id="wLet"></div>
         <div class="instr" id="wInstr"></div>
       </div>
       <div class="card">
-        <div class="kb-block" id="kbConsBlock">
-          <div class="kb-title">Langkah A · Konsonan</div>
-          <div class="kb cons" id="kbCons"></div>
-        </div>
-        <div class="kb-block" id="kbVowBlock">
-          <div class="kb-title">Langkah B · Vokal</div>
-          <div class="kb vow" id="kbVow"></div>
+        <div class="kb-block live">
+          <div class="kb-title">Pilih huruf</div>
+          <div class="kb alpha" id="kb"></div>
         </div>
       </div>
     </div>
@@ -346,11 +361,10 @@ h2{font-size:var(--fs-l);text-align:center;font-weight:900}
   <!-- 6. WORD COMPLETE -->
   <section class="screen" id="scrWin">
     <h2>🎉 Syabas! Betul!</h2>
-    <div class="picture" id="winPic">🚗</div>
-    <div class="big-word" id="winWord">KERETA</div>
+    <div class="win-list" id="winWords"></div>
     <p class="subtitle" id="winMsg"></p>
     <div class="row">
-      <button class="btn yellow" id="btnNext">🎲 Perkataan Seterusnya</button>
+      <button class="btn yellow" id="btnNext">🎲 Pusingan Seterusnya</button>
       <button class="btn ghost" id="btnEnd">🏁 Tamat Sesi</button>
     </div>
   </section>
@@ -373,9 +387,8 @@ h2{font-size:var(--fs-l);text-align:center;font-weight:900}
 'use strict';
 
 /* ================= DATA ================= */
-const CONSONANTS = 'BCDFGHJKLMNPRSTWYZ'.split('');
-const VOWELS = 'AEIOU'.split('');
-const CV = /^[BCDFGHJKLMNPRSTWYZ][AEIOU]$/;
+const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+const VOWELS = 'AEIOU';
 
 const CATEGORIES = [
   { id:'kenderaan', name:'Kenderaan', emo:'🚗' },
@@ -422,7 +435,7 @@ const NUM_BM = ['kosong','satu','dua','tiga','empat','lima','enam','tujuh','lapa
 
 /* ================= STATE ================= */
 const S = {
-  level: 0, mult: 1, cat: null, word: null, hidden: [], cur: 0, step: 'C', partial: '',
+  level: 0, mult: 1, cat: null, words: [], wi: 0, word: null, pos: 0,
   busy: false, recent: [], exId: null, repsNeeded: 1, repsDone: 0,
   stats: { words:0, miss:0, reps:0, ex:{1:0,2:0,3:0,4:0}, exSets:{1:0,2:0,3:0,4:0}, start:0, list:[] },
   sound: true, voice: true,
@@ -568,84 +581,75 @@ $('btnRollCat').addEventListener('click', async () => {
 $('btnToWord').addEventListener('click', startWord);
 
 /* ================= WORD ================= */
-function chooseWord(){
-  const pool = WORDS[S.cat.id].map(([w,e]) => ({ syl:w.split('-'), emo:e, text:w.replace(/-/g,'') }))
-    .filter(o => o.syl.filter(s => CV.test(s)).length >= S.level);
+// Tahap N = eja N patah perkataan penuh (semua huruf disorok) dalam satu pusingan
+function chooseWords(n){
+  const pool = WORDS[S.cat.id].map(([w,e]) => ({ syl:w.split('-'), emo:e, text:w.replace(/-/g,'') }));
   let fresh = pool.filter(o => !S.recent.includes(o.text));
-  if(!fresh.length) fresh = pool;
-  const w = pick(fresh);
-  S.recent.push(w.text); if(S.recent.length > 8) S.recent.shift();
-  return w;
+  if(fresh.length < n) fresh = pool;
+  const out = fresh.slice().sort(()=>Math.random()-.5).slice(0, n);
+  out.forEach(w => { S.recent.push(w.text); if(S.recent.length > 8) S.recent.shift(); });
+  return out;
 }
 function startWord(){
-  S.word = chooseWord();
-  const cvIdx = S.word.syl.map((s,i)=>CV.test(s)?i:-1).filter(i=>i>=0);
-  // pilih rawak N suku kata KV untuk disorok, kemudian susun kiri → kanan
-  const shuffled = cvIdx.slice().sort(()=>Math.random()-.5);
-  S.hidden = shuffled.slice(0, S.level).sort((a,b)=>a-b);
-  S.cur = 0; S.step = 'C'; S.partial = ''; S.busy = false;
+  S.words = chooseWords(S.level); S.wi = 0;
   $('wCat').textContent = S.cat.emo + ' ' + S.cat.name;
-  $('wPic').textContent = S.word.emo;
-  renderWord(); renderKeys(); show('scrWord');
-  setTimeout(()=>say('Lengkapkan perkataan ini'), 300);
+  renderKeys(); loadWord(); show('scrWord');
 }
-function renderWord(newLetterIdx){
-  const row = $('wSyl'); row.innerHTML='';
-  S.word.syl.forEach((s,i) => {
-    const d = document.createElement('div'); d.className='syl'; d.dataset.i=i;
-    const hIdx = S.hidden.indexOf(i);
-    if(hIdx === -1){ d.textContent = s; }
-    else if(hIdx < S.cur){ d.classList.add('done'); d.innerHTML = newLetterIdx===i ? `${s[0]}<span class="new">${s[1]}</span>` : s; }
-    else if(hIdx === S.cur){
-      d.classList.add('hidden','active');
-      if(S.partial) d.innerHTML = `<span class="${newLetterIdx===i?'new':''}">${S.partial}</span><span class="ph">_</span>`;
-      else d.innerHTML = '<span class="ph">_ _</span>';
-    } else { d.classList.add('hidden'); d.innerHTML='<span class="ph">?</span>'; }
+function loadWord(){
+  S.word = S.words[S.wi]; S.pos = 0; S.busy = false;
+  $('wPic').textContent = S.word.emo;
+  renderProgress(); renderWord(); setKeys();
+  setTimeout(()=>say('Eja perkataan ini'), 300);
+}
+function renderProgress(){
+  $('wProg').innerHTML = S.words.length < 2 ? '' : S.words.map((w,i) =>
+    `<span class="pw ${i<S.wi?'ok':i===S.wi?'now':''}">${i<S.wi ? '✅ '+w.text : 'Perkataan '+(i+1)}</span>`).join('');
+}
+function renderWord(newIdx){
+  const row = $('wLet'); row.innerHTML='';
+  const letters = S.word.text.split('');
+  const starts = new Set(); let k = 0; S.word.syl.forEach((sy,i)=>{ if(i>0) starts.add(k); k += sy.length; });
+  row.style.setProperty('--n', letters.length); row.style.setProperty('--b', starts.size);
+  letters.forEach((L,i) => {
+    const d = document.createElement('div'); d.className = 'let' + (starts.has(i)?' sb':'');
+    if(i < S.pos){ d.classList.add('done'); d.innerHTML = i===newIdx ? `<span class="new">${L}</span>` : L; }
+    else if(i === S.pos){ d.classList.add('active'); d.innerHTML = '&nbsp;'; }
+    else d.innerHTML = '&nbsp;';
     row.appendChild(d);
   });
-  const total = S.hidden.length;
-  $('stepA').className = 'step ' + (S.step==='C'?'on':'ok');
-  $('stepB').className = 'step ' + (S.step==='V'?'on':'');
-  $('wInstr').innerHTML = S.step==='C'
-    ? `Kotak ${S.cur+1}/${total}: Pilih <b>KONSONAN</b> 👉`
-    : `Kotak ${S.cur+1}/${total}: Sekarang pilih <b>VOKAL</b> 👉`;
-  $('kbConsBlock').classList.toggle('live', S.step==='C');
-  $('kbVowBlock').classList.toggle('live', S.step==='V');
+  $('wInstr').innerHTML = `Huruf ${Math.min(S.pos+1, letters.length)} / ${letters.length} · Pilih <b>HURUF</b> 👉`;
 }
 function renderKeys(){
-  const mk = (box, letters) => {
-    box.innerHTML='';
-    letters.forEach(L => { const b=document.createElement('button'); b.className='key'; b.textContent=L; b.dataset.l=L;
-      b.addEventListener('click', ()=>pressKey(L, b)); box.appendChild(b); });
-  };
-  if(!$('kbCons').children.length){ mk($('kbCons'), CONSONANTS); mk($('kbVow'), VOWELS); }
-  setKeys();
+  const box = $('kb'); if(box.children.length) return;
+  ALPHABET.forEach(L => { const b=document.createElement('button'); b.className='key'+(VOWELS.includes(L)?' v':''); b.textContent=L; b.dataset.l=L;
+    b.addEventListener('click', ()=>pressKey(L, b)); box.appendChild(b); });
 }
 function setKeys(){
-  $('kbCons').querySelectorAll('.key').forEach(b => { b.disabled = S.busy || S.step!=='C'; b.classList.remove('good','bad'); });
-  $('kbVow').querySelectorAll('.key').forEach(b => { b.disabled = S.busy || S.step!=='V'; b.classList.remove('good','bad'); });
+  $('kb').querySelectorAll('.key').forEach(b => { b.disabled = S.busy; b.classList.remove('good','bad'); });
 }
-function activeBox(){ return $('wSyl').querySelector('.syl.active'); }
+function activeBox(){ return $('wLet').querySelector('.let.active'); }
 
 async function pressKey(L, btn){
   if(S.busy) return; ac();
-  const target = S.word.syl[S.hidden[S.cur]];
-  const expected = S.step==='C' ? target[0] : target[1];
+  const expected = S.word.text[S.pos];
   if(L === expected){
-    sfx.ding(); btn.classList.add('good');
-    const idx = S.hidden[S.cur];
-    if(S.step==='C'){ S.partial = L; S.step='V'; renderWord(idx); setKeys(); say(L); }
-    else {
-      S.cur++; S.partial=''; S.step='C'; renderWord(idx); say(target);
-      if(S.cur >= S.hidden.length){ S.busy = true; setKeys(); await wait(900); return wordDone(); }
-      setKeys();
+    sfx.ding(); btn.classList.add('good'); setTimeout(()=>btn.classList.remove('good'), 350);
+    S.pos++; renderWord(S.pos-1); say(L);
+    if(S.pos >= S.word.text.length){
+      S.busy = true; setKeys(); S.stats.words++; S.stats.list.push(S.word.text); updateStats();
+      $('wInstr').innerHTML = `✅ Betul! <b>${S.word.text}</b>`;
+      await wait(400); say(S.word.text);
+      if(S.wi + 1 < S.words.length){
+        sfx.win(); confetti(25); toast('Betul! Perkataan seterusnya…');
+        await wait(1500); S.wi++; return loadWord();
+      }
+      await wait(700); return roundDone();
     }
   } else {
     S.busy = true; S.stats.miss++; updateStats();
     sfx.buzz(); btn.classList.add('bad');
     const box = activeBox(); if(box){ box.classList.add('shake','wrong'); }
-    $('kbCons').querySelectorAll('.key').forEach(b=>{ if(b!==btn) b.disabled=true; });
-    $('kbVow').querySelectorAll('.key').forEach(b=>{ if(b!==btn) b.disabled=true; });
+    $('kb').querySelectorAll('.key').forEach(b=>{ if(b!==btn) b.disabled=true; });
     $('wInstr').innerHTML = '❌ Belum tepat… Masa untuk <b>Dadu Hukuman!</b>';
     say('Alamak, cuba lagi selepas senaman');
     await wait(1300);
@@ -653,12 +657,11 @@ async function pressKey(L, btn){
   }
 }
 
-function wordDone(){
-  S.stats.words++; S.stats.list.push(S.word.text); updateStats();
-  $('winPic').textContent = S.word.emo; $('winWord').textContent = S.word.text;
+function roundDone(){
+  $('winWords').innerHTML = S.words.map(w => `<div>${w.emo} ${w.text}</div>`).join('');
   const msgs = ['Hebat! Teruskan!','Pandai! 👏','Mantap! 💯','Bagus sangat! 🌟','Luar biasa! 🚀'];
-  $('winMsg').textContent = pick(msgs) + ` Perkataan siap: ${S.stats.words}`;
-  sfx.win(); confetti(); show('scrWin'); say('Syabas! ' + S.word.text);
+  $('winMsg').textContent = pick(msgs) + ` Jumlah perkataan siap: ${S.stats.words}`;
+  sfx.win(); confetti(); show('scrWin'); say('Syabas! ' + S.words.map(w=>w.text).join(', '));
 }
 $('btnNext').addEventListener('click', goCategory);
 $('btnEnd').addEventListener('click', showSummary);
@@ -718,7 +721,7 @@ $('btnRep').addEventListener('click', async () => {
 });
 $('btnBack').addEventListener('click', () => {
   S.busy = false; renderWord(); setKeys(); show('scrWord');
-  toast(S.step==='C' ? 'Cuba semula: pilih KONSONAN' : 'Cuba semula: pilih VOKAL');
+  toast('Cuba semula huruf ini');
 });
 
 /* ================= STICK FIGURES (SVG + SMIL, berfungsi offline & Safari) ================= */
