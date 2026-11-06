@@ -2,7 +2,7 @@
 <html lang="ms">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0f2140">
 <title>Dice-cise</title>
 <style>
@@ -17,6 +17,7 @@
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:#0b1a33}
 body{
   background:radial-gradient(circle at 20% 0%,#1d3d78 0%,var(--bg) 60%) fixed, var(--bg);
   color:var(--text);
@@ -234,6 +235,15 @@ h2{font-size:var(--fs-l);text-align:center;font-weight:900}
   header{position:static}
 }
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important}.dice{transition-duration:.6s}}
+.let.pre{background:rgba(255,210,63,.92);color:#2b2100;border:4px solid var(--yellow)}
+.group-title{margin-top:6px}
+.level .tag{font-size:var(--fs-s);font-weight:900;padding:4px 12px;border-radius:999px;background:rgba(255,255,255,.12)}
+.abl .num{color:var(--blue)}
+[hidden]{display:none!important}
+.clue-btn{font-size:var(--fs-s);font-weight:900;padding:12px 24px;border-radius:999px;background:var(--panel2);color:#fff;border:3px dashed var(--yellow)}
+.clue-btn.on{border-style:solid;background:rgba(255,210,63,.15)}
+.tips{display:flex;flex-direction:column;gap:14px;align-self:stretch}
+.ex-tag{font-size:var(--fs-m);font-weight:900;color:var(--yellow);text-align:center}
 </style>
 </head>
 <body>
@@ -259,22 +269,40 @@ h2{font-size:var(--fs-l);text-align:center;font-weight:900}
   <section class="screen active" id="scrStart">
     <h1 class="title"><span class="d">Dice</span>-<span class="c">cise</span></h1>
     <p class="subtitle">Baling dadu, eja perkataan, dan bersenam! 🎲🔤💪</p>
-    <h2>Pilih Tahap Kognitif</h2>
+    <h2 class="group-title">1. Pilih Tahap Kognitif</h2>
     <div class="levels">
-      <button class="level l1" data-level="1">
+      <button class="level cog l1" data-level="1">
         <div class="num">1</div><div class="name">Rendah</div>
         <div class="boxes"><i class="e"></i></div>
-        <div class="desc">Eja <b>1</b> patah perkataan</div>
+        <div class="desc"><b>1</b> perkataan · <b>4–6</b> huruf</div>
       </button>
-      <button class="level l2" data-level="2">
+      <button class="level cog l2" data-level="2">
         <div class="num">2</div><div class="name">Sederhana</div>
         <div class="boxes"><i class="e"></i><i class="e"></i></div>
-        <div class="desc">Eja <b>2</b> patah perkataan</div>
+        <div class="desc"><b>2</b> perkataan · <b>7–9</b> huruf</div>
       </button>
-      <button class="level l3" data-level="3">
+      <button class="level cog l3" data-level="3">
         <div class="num">3</div><div class="name">Tinggi</div>
         <div class="boxes"><i class="e"></i><i class="e"></i><i class="e"></i></div>
-        <div class="desc">Eja <b>3</b> patah perkataan</div>
+        <div class="desc"><b>3</b> perkataan · <b>10–12</b> huruf</div>
+      </button>
+    </div>
+    <h2 class="group-title">2. Pilih Tahap Keupayaan</h2>
+    <div class="levels">
+      <button class="level abl" data-ab="1">
+        <div class="num">1</div><div class="name">Perlu Bantuan</div>
+        <div class="tag">± 70% bantuan</div>
+        <div class="desc">Senaman dengan sokongan / sambil duduk</div>
+      </button>
+      <button class="level abl" data-ab="2">
+        <div class="num">2</div><div class="name">Bantuan Minima</div>
+        <div class="tag">± 30% bantuan</div>
+        <div class="desc">Senaman berdiri, sokongan berkurang</div>
+      </button>
+      <button class="level abl" data-ab="3">
+        <div class="num">3</div><div class="name">Berdikari</div>
+        <div class="tag">Tanpa bantuan</div>
+        <div class="desc">Senaman tanpa sokongan</div>
       </button>
     </div>
     <div class="settings">
@@ -283,6 +311,12 @@ h2{font-size:var(--fs-l);text-align:center;font-weight:900}
         <option value="round">Semua perkataan dalam pusingan (ayat penuh)</option>
         <option value="word">Perkataan yang sedang dieja sahaja</option>
       </select>
+      <label for="selMax">Had ulangan:</label>
+      <select id="selMax">
+        <option value="0">Tiada had</option>
+        <option value="3">Max 3</option><option value="5">Max 5</option><option value="6">Max 6</option>
+        <option value="8">Max 8</option><option value="10">Max 10</option>
+      </select>
     </div>
     <button class="btn" id="btnStart" disabled>▶ Mula</button>
   </section>
@@ -290,7 +324,7 @@ h2{font-size:var(--fs-l);text-align:center;font-weight:900}
   <!-- 2. CATEGORY DICE -->
   <section class="screen" id="scrCat">
     <h2>Baling Dadu Kategori</h2>
-    <p class="hint-text">1 &amp; 4 = Kenderaan 🚗 &nbsp;·&nbsp; 2 &amp; 5 = Makanan 🍜 &nbsp;·&nbsp; 3 &amp; 6 = Tempat 🏫</p>
+    <p class="hint-text">1 Kenderaan 🚗 · 2 Makanan 🍜 · 3 Tempat 🏫 · 4 Personaliti 😊 · 5 Objek ⚽ · 6 Baling Semula 🔄</p>
     <div>
       <div class="dice-stage"><div class="dice cat" id="diceCat"></div></div>
       <div class="dice-shadow"></div>
@@ -308,13 +342,14 @@ h2{font-size:var(--fs-l);text-align:center;font-weight:900}
       <div class="card">
         <div class="chip" id="wCat">Kenderaan</div>
         <div class="progress" id="wProg"></div>
-        <div class="picture" id="wPic">🚗</div>
+        <button class="clue-btn" id="btnClue">💡 Tunjuk Petunjuk</button>
+        <div class="picture" id="wPic" hidden>🚗</div>
         <div class="let-row" id="wLet"></div>
         <div class="instr" id="wInstr"></div>
       </div>
       <div class="card">
         <div class="kb-block live">
-          <div class="kb-title">Pilih huruf</div>
+          <div class="kb-title">Pilih huruf konsonan</div>
           <div class="kb alpha" id="kb"></div>
         </div>
       </div>
@@ -325,7 +360,7 @@ h2{font-size:var(--fs-l);text-align:center;font-weight:900}
   <section class="screen" id="scrPen">
     <div class="pen-head">😅 Alamak! Dadu Hukuman</div>
     <div class="reps-badge" id="penReps">Ulangan: 1</div>
-    <p class="hint-text">1 Duduk-Berdiri · 2 Angkat Tumit · 3 Angkat Peha · 4 Cangkung · 5 &amp; 6 Baling Semula</p>
+    <p class="hint-text" id="penHint"></p>
     <div>
       <div class="dice-stage"><div class="dice pen" id="dicePen"></div></div>
       <div class="dice-shadow"></div>
@@ -342,16 +377,17 @@ h2{font-size:var(--fs-l);text-align:center;font-weight:900}
     <div class="ex-wrap">
       <div class="card">
         <div class="ex-name" id="exName"></div>
+        <div class="ex-tag" id="exTag"></div>
         <div class="ex-en" id="exEn"></div>
         <div class="ex-fig" id="exFig"></div>
       </div>
       <div class="card">
-        <div class="counter" id="exCount">0 <small>/ 1</small></div>
-        <div class="dots" id="exDots"></div>
-        <ol class="ex-steps" id="exSteps"></ol>
-        <div class="safety" id="exSafety"></div>
-        <button class="btn" id="btnRep">✅ Siap 1 Ulangan</button>
-        <button class="btn blue" id="btnBack" hidden>🔤 Sambung Ejaan</button>
+        <div class="reps-badge" id="exReps"></div>
+        <div class="tips" id="exTips">
+          <ol class="ex-steps" id="exSteps"></ol>
+          <div class="safety" id="exSafety"></div>
+        </div>
+        <button class="btn" id="btnRep">✅ Selesai Senaman</button>
       </div>
     </div>
   </section>
@@ -385,69 +421,114 @@ h2{font-size:var(--fs-l);text-align:center;font-weight:900}
 'use strict';
 
 /* ================= DATA ================= */
-const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 const VOWELS = 'AEIOU';
+const CONSONANTS = 'BCDFGHJKLMNPQRSTVWXYZ'.split('');
 
+// Dadu kategori: muka 1–5 = kategori, muka 6 = baling semula
 const CATEGORIES = [
-  { id:'kenderaan', name:'Kenderaan', emo:'🚗' },
-  { id:'makanan',   name:'Makanan',   emo:'🍜' },
-  { id:'tempat',    name:'Tempat',    emo:'🏫' },
+  { id:'kenderaan',   name:'Kenderaan',   emo:'🚗' },
+  { id:'makanan',     name:'Makanan',     emo:'🍜' },
+  { id:'tempat',      name:'Tempat',      emo:'🏫' },
+  { id:'personaliti', name:'Personaliti', emo:'😊' },
+  { id:'objek',       name:'Objek',       emo:'⚽' },
 ];
 
-// Suku kata dipisah dengan '-'. Hanya suku kata KV (konsonan+vokal) akan disorok.
+// Tahap kognitif: N perkataan, jumlah huruf dalam julat
+const LEVELS = {
+  1: { words:1, min:4,  max:6,  name:'Rendah' },
+  2: { words:2, min:7,  max:9,  name:'Sederhana' },
+  3: { words:3, min:10, max:12, name:'Tinggi' },
+};
+
+// Suku kata dipisah dengan '-'. Vokal dipaparkan siap; pemain teka konsonan sahaja.
 const WORDS = {
   kenderaan: [
-    ['KE-RE-TA','🚗'], ['KE-RE-TA-PI','🚆'], ['MO-TO-SI-KAL','🏍️'], ['PE-RA-HU','🚣'],
-    ['BA-SI-KAL','🚲'], ['PE-SA-WAT','✈️'], ['LO-RI','🚚'], ['KA-PAL','🚢'], ['RO-KET','🚀'],
-    ['HE-LI-KOP-TER','🚁'], ['TE-KSI','🚕'],
+    ['BAS','🚌'], ['VAN','🚐'], ['BOT','🛥️'], ['JIP','🚙'], ['LO-RI','🚚'], ['TREN','🚆'], ['FE-RI','⛴️'],
+    ['KA-PAL','🚢'], ['RO-KET','🚀'], ['TEK-SI','🚕'], ['KE-RE-TA','🚗'], ['PE-RA-HU','🚣'], ['SAM-PAN','🛶'],
   ],
   makanan: [
-    ['NA-SI','🍚'], ['RO-TI','🍞'], ['SA-TE','🍢'], ['PI-ZA','🍕'], ['KO-PI','☕'], ['SU-SU','🥛'],
-    ['MA-DU','🍯'], ['CI-LI','🌶️'], ['KA-RI','🍛'], ['SO-TO','🍲'], ['TO-MA-TO','🍅'],
-    ['KE-LA-PA','🥥'], ['MA-KA-RO-NI','🍝'], ['PI-SANG','🍌'], ['TE-LUR','🥚'], ['KE-JU','🧀'],
+    ['TEH','🍵'], ['KEK','🎂'], ['NA-SI','🍚'], ['RO-TI','🍞'], ['SA-TE','🍢'], ['PI-ZA','🍕'], ['KO-PI','☕'],
+    ['SU-SU','🥛'], ['MA-DU','🍯'], ['CI-LI','🌶️'], ['KA-RI','🍛'], ['SO-TO','🍲'], ['KE-JU','🧀'], ['E-PAL','🍎'],
+    ['KU-IH','🍡'], ['TE-LUR','🥚'], ['BU-BUR','🥣'], ['LAK-SA','🍜'], ['PI-SANG','🍌'], ['TO-MA-TO','🍅'], ['KE-LA-PA','🥥'],
   ],
   tempat: [
-    ['SE-KO-LAH','🏫'], ['RU-MAH','🏠'], ['TA-DI-KA','🧸'], ['PA-SA-RA-YA','🏬'], ['PE-LA-BU-HAN','⚓'],
-    ['PE-JA-BAT','🏢'], ['PA-WA-GAM','🎬'], ['MU-ZI-UM','🏛️'], ['KO-TA','🏰'], ['DE-SA','🏡'],
-    ['HOS-PI-TAL','🏥'], ['TA-MAN','🌳'], ['HO-TEL','🏨'], ['KE-DAI','🏪'], ['BU-KIT','⛰️'],
+    ['ZOO','🦁'], ['BANK','🏦'], ['KO-TA','🏰'], ['DE-SA','🏡'], ['RU-MAH','🏠'], ['TA-MAN','🌳'], ['HO-TEL','🏨'],
+    ['KE-DAI','🏪'], ['BU-KIT','⛰️'], ['PA-SAR','🛒'], ['TA-DI-KA','🧸'], ['MU-ZI-UM','🏛️'], ['PAN-TAI','🏖️'],
+    ['MAS-JID','🕌'], ['KI-LANG','🏭'], ['LA-DANG','🌾'],
+  ],
+  personaliti: [
+    ['BA-IK','😇'], ['LU-CU','🤡'], ['MA-LU','🙈'], ['RA-JIN','💪'], ['SO-PAN','🙏'], ['JU-JUR','🤝'], ['CE-RI-A','😄'],
+    ['RA-MAH','😊'], ['SA-BAR','😌'], ['KE-MAS','👔'], ['SE-GAK','😎'], ['MAN-JA','🥰'], ['BE-RA-NI','🦁'],
+    ['PAN-DAI','🧠'], ['GA-RANG','😠'],
+  ],
+  objek: [
+    ['JAM','⏰'], ['PEN','🖊️'], ['BEG','🎒'], ['BO-LA','⚽'], ['BU-KU','📚'], ['ME-JA','🪑'], ['TO-PI','🧢'],
+    ['SU-DU','🥄'], ['KUN-CI','🔑'], ['CA-WAN','🫖'], ['LAM-PU','💡'], ['KA-SUT','👟'], ['KE-RU-SI','🪑'],
+    ['PA-YUNG','☂️'], ['CER-MIN','🪞'], ['BAN-TAL','🛏️'],
   ],
 };
 
+// Senaman ikut tahap keupayaan
 const EXERCISES = {
-  1: { name:'Duduk-Berdiri', en:'Sit to Stand', emo:'🪑',
-       steps:['Duduk di hujung kerusi, kaki rata di lantai.','Badan condong sedikit ke depan.','Tolak dengan kaki dan berdiri tegak.','Duduk semula perlahan-lahan.'],
-       safety:'⚠️ Guna kerusi yang stabil. Tangan boleh pegang lengan kerusi jika perlu.' },
-  2: { name:'Angkat Tumit', en:'Heel Raise', emo:'🦶',
-       steps:['Berdiri tegak, pegang meja atau kerusi.','Angkat tumit, berdiri atas hujung jari kaki.','Tahan 2 saat.','Turunkan tumit perlahan-lahan.'],
-       safety:'⚠️ Sentiasa ada sokongan untuk tangan. Jangan tergesa-gesa.' },
-  3: { name:'Angkat Peha', en:'Marching / Hip Flexion', emo:'🦵',
-       steps:['Berdiri tegak, pegang sokongan jika perlu.','Angkat lutut kanan setinggi yang selesa.','Turunkan, kemudian angkat lutut kiri.','Kanan + kiri = 1 ulangan.'],
-       safety:'⚠️ Badan kekal tegak. Boleh buat sambil duduk jika keseimbangan kurang.' },
-  4: { name:'Cangkung', en:'Squat', emo:'🏋️',
-       steps:['Berdiri, kaki selebar bahu.','Tolak punggung ke belakang seperti mahu duduk.','Bengkokkan lutut sekadar selesa.','Tolak naik dan berdiri tegak semula.'],
-       safety:'⚠️ Lutut jangan melepasi hujung jari kaki. Berhenti jika sakit.' },
+  ss_sup: { name:'Duduk-Berdiri', tag:'Dengan sokongan tangan', en:'Sit to Stand (hand support)', emo:'🪑',
+    steps:['Duduk di hujung kerusi, kaki rata di lantai.','Letak tangan atas lengan kerusi atau peha.','Condong ke depan, tolak dengan tangan dan kaki untuk berdiri.','Duduk semula perlahan-lahan.'],
+    safety:'⚠️ Physio/penjaga berada di sisi. Guna kerusi yang stabil.' },
+  ss_free: { name:'Duduk-Berdiri', tag:'Tanpa sokongan tangan', en:'Sit to Stand (no support)', emo:'🪑',
+    steps:['Duduk di hujung kerusi, kaki rata di lantai.','Silangkan tangan di dada.','Condong ke depan dan berdiri tegak tanpa guna tangan.','Duduk semula perlahan-lahan.'],
+    safety:'⚠️ Kerusi mesti stabil. Penjaga berdiri dekat jika perlu.' },
+  squat: { name:'Cangkung', tag:'Tanpa sokongan', en:'Squat', emo:'🏋️',
+    steps:['Berdiri, kaki selebar bahu.','Tolak punggung ke belakang seperti mahu duduk.','Bengkokkan lutut sekadar selesa.','Tolak naik dan berdiri tegak semula.'],
+    safety:'⚠️ Lutut jangan melepasi hujung jari kaki. Berhenti jika sakit.' },
+  hr_sit: { name:'Angkat Tumit', tag:'Sambil duduk', en:'Seated Heel Raise', emo:'🦶',
+    steps:['Duduk tegak, kaki rata di lantai.','Angkat kedua-dua tumit, hujung jari kaki kekal di lantai.','Tahan 2 saat.','Turunkan tumit perlahan-lahan.'],
+    safety:'⚠️ Duduk di kerusi yang stabil, belakang bersandar jika perlu.' },
+  hr_sup: { name:'Angkat Tumit', tag:'Berdiri, pegang sokongan', en:'Heel Raise (hand support)', emo:'🦶',
+    steps:['Berdiri tegak, pegang meja atau kerusi.','Angkat tumit, berdiri atas hujung jari kaki.','Tahan 2 saat.','Turunkan tumit perlahan-lahan.'],
+    safety:'⚠️ Sentiasa pegang sokongan. Jangan tergesa-gesa.' },
+  hr_free: { name:'Angkat Tumit', tag:'Tanpa sokongan', en:'Heel Raise (no support)', emo:'🦶',
+    steps:['Berdiri tegak, tangan di sisi.','Angkat tumit, berdiri atas hujung jari kaki.','Tahan 2 saat.','Turunkan tumit perlahan-lahan.'],
+    safety:'⚠️ Ada orang berdekatan untuk keselamatan.' },
+  hip_sup: { name:'Angkat Peha', tag:'Berdiri, pegang sokongan', en:'Hip Raise (hand support)', emo:'🦵',
+    steps:['Berdiri tegak, pegang meja atau kerusi.','Angkat lutut kanan setinggi yang selesa, tahan 2 saat.','Turunkan, kemudian angkat lutut kiri.','Kanan + kiri = 1 ulangan.'],
+    safety:'⚠️ Badan kekal tegak. Sentiasa pegang sokongan.' },
+  hip_free: { name:'Angkat Peha', tag:'Tanpa sokongan tangan', en:'Hip Raise (no hand support)', emo:'🦵',
+    steps:['Berdiri tegak, tangan di pinggang.','Angkat lutut kanan setinggi yang selesa, tahan 2 saat.','Turunkan, kemudian angkat lutut kiri.','Kanan + kiri = 1 ulangan.'],
+    safety:'⚠️ Penjaga berdiri dekat untuk keselamatan.' },
+  hip_alt: { name:'Angkat Peha Berselang-seli', tag:'Tanpa sokongan', en:'Alternate Hip Raise', emo:'🥁',
+    steps:['Berdiri tegak.','Angkat lutut bergilir-gilir seperti berkawad.','Hayun tangan bertentangan dengan kaki.','Kanan + kiri = 1 ulangan.'],
+    safety:'⚠️ Badan tegak, kawal pergerakan. Berhenti jika pening.' },
+};
+
+// Dadu hukuman: 1–2 = senaman A, 3–4 = senaman B, 5–6 = senaman C
+const ABILITY = {
+  1: { name:'Perlu Bantuan (±70%)', ex:['ss_sup','hr_sit','hip_sup'] },
+  2: { name:'Bantuan Minima (±30%)', ex:['ss_free','hr_sup','hip_free'] },
+  3: { name:'Berdikari', ex:['squat','hr_free','hip_alt'] },
 };
 
 const NUM_BM = ['kosong','satu','dua','tiga','empat','lima','enam','tujuh','lapan','sembilan','sepuluh',
   'sebelas','dua belas','tiga belas','empat belas','lima belas'];
 
 /* ================= STATE ================= */
+const freshStats = () => ({ words:0, miss:0, reps:0, ex:{}, exSets:{}, start:Date.now(), list:[] });
 const S = {
-  level: 0, repMode: 'round', cat: null, words: [], wi: 0, word: null, pos: 0,
+  level: 0, ab: 0, repMode: 'round', maxReps: 0, cat: null, words: [], wi: 0, word: null, pos: 0,
   busy: false, recent: [], exId: null, repsNeeded: 1, repsDone: 0,
-  stats: { words:0, miss:0, reps:0, ex:{1:0,2:0,3:0,4:0}, exSets:{1:0,2:0,3:0,4:0}, start:0, list:[] },
-  sound: true, voice: true,
+  stats: freshStats(), sound: true, voice: true,
 };
 const store = {
   get(k,d){ try{ const v = localStorage.getItem('dicecise.'+k); return v===null?d:JSON.parse(v);}catch(e){return d;} },
   set(k,v){ try{ localStorage.setItem('dicecise.'+k, JSON.stringify(v)); }catch(e){} },
 };
-S.sound = store.get('sound', true); S.voice = store.get('voice', true); S.repMode = store.get('repMode', 'round') === 'word' ? 'word' : 'round';
+S.sound = store.get('sound', true); S.voice = store.get('voice', true);
+S.repMode = store.get('repMode', 'round') === 'word' ? 'word' : 'round';
+S.maxReps = +store.get('maxReps', 0) || 0;
 
 const $ = id => document.getElementById(id);
 const rand = n => Math.floor(Math.random()*n);
 const pick = a => a[rand(a.length)];
 const wait = ms => new Promise(r => setTimeout(r, ms));
+const isVowel = L => VOWELS.includes(L);
 
 /* ================= AUDIO ================= */
 let AC = null;
@@ -498,7 +579,7 @@ function show(id){
 }
 function toast(msg){ const t=$('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),1800); }
 function updateStats(){
-  $('stLevel').textContent = 'Tahap ' + S.level;
+  $('stLevel').textContent = `Kognitif ${S.level} · Keupayaan ${S.ab}`;
   $('stWords').textContent = S.stats.words; $('stMiss').textContent = S.stats.miss; $('stReps').textContent = S.stats.reps;
 }
 function confetti(n=70){
@@ -516,7 +597,6 @@ function syncTools(){
 }
 
 /* ================= DICE ================= */
-// Orientasi kiub supaya muka N menghadap depan
 const FACE_ROT = { 1:[0,0], 2:[90,0], 3:[0,-90], 4:[0,90], 5:[-90,0], 6:[0,180] };
 function buildDice(el, faces){
   el.innerHTML = '';
@@ -539,26 +619,41 @@ function rollDice(el){
     setTimeout(() => { sfx.land(); res(n); }, 1550);
   });
 }
-const catFaces = {}; for(let n=1;n<=6;n++){ const c = CATEGORIES[(n-1)%3]; catFaces[n] = {emo:c.emo, lbl:c.name}; }
-const penFaces = {}; for(let n=1;n<=6;n++){
-  penFaces[n] = n<=4 ? {emo:EXERCISES[n].emo, lbl:EXERCISES[n].name} : {emo:'🔄', lbl:'Baling Semula', cls:'re'};
-}
+const catFaces = {};
+for(let n=1;n<=6;n++){ const c = CATEGORIES[n-1]; catFaces[n] = c ? {emo:c.emo, lbl:c.name} : {emo:'🔄', lbl:'Baling Semula', cls:'re'}; }
 buildDice($('diceCat'), catFaces);
-buildDice($('dicePen'), penFaces);
+$('diceCat').querySelector('.face.re').style.background = 'linear-gradient(145deg,#b9a6ff,#7a5cff)';
+
+const exForFace = n => ABILITY[S.ab].ex[Math.floor((n-1)/2)];
+function buildPenDice(){
+  const faces = {};
+  for(let n=1;n<=6;n++){ const e = EXERCISES[exForFace(n)]; faces[n] = {emo:e.emo, lbl:e.name}; }
+  buildDice($('dicePen'), faces);
+  $('penHint').textContent = ABILITY[S.ab].ex.map((id,i) => `${i*2+1}–${i*2+2} ${EXERCISES[id].name} (${EXERCISES[id].tag.toLowerCase()})`).join(' · ');
+}
 
 /* ================= START ================= */
-document.querySelectorAll('.level').forEach(b => b.addEventListener('click', () => {
+function checkStart(){ $('btnStart').disabled = !(S.level && S.ab); }
+document.querySelectorAll('.level.cog').forEach(b => b.addEventListener('click', () => {
   ac();
-  document.querySelectorAll('.level').forEach(x => x.classList.toggle('sel', x===b));
-  S.level = +b.dataset.level; $('btnStart').disabled = false;
-  sfx.ding(); say('Tahap ' + NUM_BM[S.level]);
+  document.querySelectorAll('.level.cog').forEach(x => x.classList.toggle('sel', x===b));
+  S.level = +b.dataset.level; checkStart();
+  sfx.ding(); say('Tahap kognitif ' + NUM_BM[S.level]);
+}));
+document.querySelectorAll('.level.abl').forEach(b => b.addEventListener('click', () => {
+  ac();
+  document.querySelectorAll('.level.abl').forEach(x => x.classList.toggle('sel', x===b));
+  S.ab = +b.dataset.ab; checkStart();
+  sfx.ding(); say('Tahap keupayaan ' + NUM_BM[S.ab]);
 }));
 $('selReps').value = S.repMode;
 $('selReps').addEventListener('change', e => { S.repMode = e.target.value; store.set('repMode', S.repMode); });
+$('selMax').value = String(S.maxReps);
+$('selMax').addEventListener('change', e => { S.maxReps = +e.target.value || 0; store.set('maxReps', S.maxReps); });
 $('btnStart').addEventListener('click', () => {
   ac();
-  S.stats = { words:0, miss:0, reps:0, ex:{1:0,2:0,3:0,4:0}, exSets:{1:0,2:0,3:0,4:0}, start:Date.now(), list:[] };
-  updateStats(); goCategory();
+  S.stats = freshStats();
+  buildPenDice(); updateStats(); goCategory();
 });
 
 /* ================= CATEGORY ================= */
@@ -570,8 +665,14 @@ function goCategory(){
 $('btnRollCat').addEventListener('click', async () => {
   $('btnRollCat').disabled = true; $('catResult').textContent=''; $('catResult').classList.remove('show');
   const n = await rollDice($('diceCat'));
-  S.cat = CATEGORIES[(n-1)%3];
-  const r = $('catResult'); r.innerHTML = `<span>${S.cat.emo}</span><span>${S.cat.name}</span>`;
+  const r = $('catResult');
+  if(n === 6){
+    r.innerHTML = '<span>🔄</span><span>Baling Semula!</span>';
+    void r.offsetWidth; r.classList.add('show'); say('Baling semula');
+    $('btnRollCat').disabled = false; return;
+  }
+  S.cat = CATEGORIES[n-1];
+  r.innerHTML = `<span>${S.cat.emo}</span><span>${S.cat.name}</span>`;
   void r.offsetWidth; r.classList.add('show');
   say(S.cat.name);
   $('btnRollCat').hidden = true; $('btnToWord').hidden = false; $('btnToWord').focus();
@@ -579,25 +680,51 @@ $('btnRollCat').addEventListener('click', async () => {
 $('btnToWord').addEventListener('click', startWord);
 
 /* ================= WORD ================= */
-// Tahap N = eja N patah perkataan penuh (semua huruf disorok) dalam satu pusingan
-function chooseWords(n){
-  const pool = WORDS[S.cat.id].map(([w,e]) => ({ syl:w.split('-'), emo:e, text:w.replace(/-/g,'') }));
-  let fresh = pool.filter(o => !S.recent.includes(o.text));
-  if(fresh.length < n) fresh = pool;
-  const out = fresh.slice().sort(()=>Math.random()-.5).slice(0, n);
-  out.forEach(w => { S.recent.push(w.text); if(S.recent.length > 8) S.recent.shift(); });
-  return out;
+const toWord = ([w,e]) => ({ syl:w.split('-'), emo:e, text:w.replace(/-/g,'') });
+const shuffle = a => { const b=a.slice(); for(let i=b.length-1;i>0;i--){ const j=rand(i+1); [b[i],b[j]]=[b[j],b[i]]; } return b; };
+// Pilih N perkataan yang jumlah hurufnya dalam julat tahap kognitif
+function chooseWords(catId, level, recent=[]){
+  const L = LEVELS[level], pool = WORDS[catId].map(toWord);
+  const fresh = pool.filter(o => !recent.includes(o.text));
+  let best = null, bestGap = Infinity;
+  for(let t=0; t<600; t++){
+    const src = (t < 300 && fresh.length >= L.words) ? fresh : pool;
+    const pickN = shuffle(src).slice(0, L.words);
+    const len = pickN.reduce((a,w)=>a+w.text.length, 0);
+    const gap = len < L.min ? L.min-len : len > L.max ? len-L.max : 0;
+    if(gap === 0) return pickN;
+    if(gap < bestGap){ best = pickN; bestGap = gap; }
+  }
+  return best;
 }
+// Semakan bank perkataan semasa load
+(function validateBank(){
+  for(const c of CATEGORIES) for(const lv of [1,2,3]){
+    const L = LEVELS[lv], pool = WORDS[c.id].map(toWord);
+    if(lv === 1){ const ok = pool.filter(w => w.text.length>=L.min && w.text.length<=L.max).length;
+      if(ok < 5) console.warn(`[Dice-cise] ${c.name} Tahap 1: cuma ${ok} perkataan 4–6 huruf`); }
+    const r = chooseWords(c.id, lv); const len = r.reduce((a,w)=>a+w.text.length,0);
+    if(len < L.min || len > L.max) console.warn(`[Dice-cise] ${c.name} Tahap ${lv}: kombinasi ${len} huruf di luar julat`);
+  }
+})();
+
 function startWord(){
-  S.words = chooseWords(S.level); S.wi = 0;
+  S.words = chooseWords(S.cat.id, S.level, S.recent); S.wi = 0;
+  S.words.forEach(w => { S.recent.push(w.text); if(S.recent.length > 10) S.recent.shift(); });
   $('wCat').textContent = S.cat.emo + ' ' + S.cat.name;
   renderKeys(); loadWord(); show('scrWord');
 }
+function setClue(btn, box, open, onTxt, offTxt){
+  box.hidden = !open; btn.classList.toggle('on', open); btn.textContent = open ? onTxt : offTxt;
+}
+const CLUE_ON = '🙈 Sorok Petunjuk', CLUE_OFF = '💡 Tunjuk Petunjuk', TIPS_ON = '🙈 Sorok Tips', TIPS_OFF = '💡 Tunjuk Tips';
+$('btnClue').addEventListener('click', () => setClue($('btnClue'), $('wPic'), $('wPic').hidden, CLUE_ON, CLUE_OFF));
+function nextCons(from){ const t = S.word.text; while(from < t.length && isVowel(t[from])) from++; return from; }
 function loadWord(){
-  S.word = S.words[S.wi]; S.pos = 0; S.busy = false;
-  $('wPic').textContent = S.word.emo;
+  S.word = S.words[S.wi]; S.pos = nextCons(0); S.busy = false;
+  $('wPic').textContent = S.word.emo; setClue($('btnClue'), $('wPic'), false, CLUE_ON, CLUE_OFF);
   renderProgress(); renderWord(); setKeys();
-  setTimeout(()=>say('Eja perkataan ini'), 300);
+  setTimeout(()=>say('Teka huruf konsonan'), 300);
 }
 function renderProgress(){
   $('wProg').innerHTML = S.words.length < 2 ? '' : S.words.map((w,i) =>
@@ -610,16 +737,19 @@ function renderWord(newIdx){
   row.style.setProperty('--n', letters.length); row.style.setProperty('--b', starts.size);
   letters.forEach((L,i) => {
     const d = document.createElement('div'); d.className = 'let' + (starts.has(i)?' sb':'');
-    if(i < S.pos){ d.classList.add('done'); d.innerHTML = i===newIdx ? `<span class="new">${L}</span>` : L; }
+    if(isVowel(L)){ d.classList.add('pre'); d.textContent = L; }
+    else if(i < S.pos){ d.classList.add('done'); d.innerHTML = i===newIdx ? `<span class="new">${L}</span>` : L; }
     else if(i === S.pos){ d.classList.add('active'); d.innerHTML = '&nbsp;'; }
     else d.innerHTML = '&nbsp;';
     row.appendChild(d);
   });
-  $('wInstr').innerHTML = `Huruf ${Math.min(S.pos+1, letters.length)} / ${letters.length} · Pilih <b>HURUF</b> 👉`;
+  const cons = letters.map((L,i)=>[L,i]).filter(([L])=>!isVowel(L));
+  const doneC = cons.filter(([,i])=>i < S.pos).length;
+  $('wInstr').innerHTML = `Konsonan ${Math.min(doneC+1, cons.length)} / ${cons.length} · Pilih <b>KONSONAN</b> 👉`;
 }
 function renderKeys(){
   const box = $('kb'); if(box.children.length) return;
-  ALPHABET.forEach(L => { const b=document.createElement('button'); b.className='key'+(VOWELS.includes(L)?' v':''); b.textContent=L; b.dataset.l=L;
+  CONSONANTS.forEach(L => { const b=document.createElement('button'); b.className='key'; b.textContent=L; b.dataset.l=L;
     b.addEventListener('click', ()=>pressKey(L, b)); box.appendChild(b); });
 }
 function setKeys(){
@@ -632,7 +762,7 @@ async function pressKey(L, btn){
   const expected = S.word.text[S.pos];
   if(L === expected){
     sfx.ding(); btn.classList.add('good'); setTimeout(()=>btn.classList.remove('good'), 350);
-    S.pos++; renderWord(S.pos-1); say(L);
+    const idx = S.pos; S.pos = nextCons(S.pos+1); renderWord(idx); say(L);
     if(S.pos >= S.word.text.length){
       S.busy = true; setKeys(); S.stats.words++; S.stats.list.push(S.word.text); updateStats();
       $('wInstr').innerHTML = `✅ Betul! <b>${S.word.text}</b>`;
@@ -666,10 +796,11 @@ $('btnEnd').addEventListener('click', showSummary);
 
 /* ================= PENALTY ================= */
 function goPenalty(){
-  // Bilangan ulangan = bilangan huruf dalam ayat (semua perkataan pusingan) atau perkataan semasa
+  // Ulangan = bilangan huruf dalam ayat (semua perkataan pusingan) atau perkataan semasa
   const src = S.repMode === 'word' ? S.word.text : S.words.map(w => w.text).join(' ');
-  S.repsNeeded = src.replace(/ /g,'').length;
-  $('penReps').textContent = `Ulangan: ${S.repsNeeded} (${src} = ${S.repsNeeded} huruf)`;
+  const letters = src.replace(/ /g,'').length;
+  S.repsNeeded = S.maxReps > 0 ? Math.min(letters, S.maxReps) : letters;
+  $('penReps').textContent = `Ulangan: ${S.repsNeeded} (${src} = ${letters} huruf${S.repsNeeded < letters ? ', had max '+S.maxReps : ''})`;
   $('penResult').textContent=''; $('penResult').classList.remove('show');
   $('btnRollPen').hidden=false; $('btnRollPen').disabled=false; $('btnToEx').hidden=true;
   show('scrPen');
@@ -677,13 +808,8 @@ function goPenalty(){
 $('btnRollPen').addEventListener('click', async () => {
   $('btnRollPen').disabled = true; $('penResult').textContent=''; $('penResult').classList.remove('show');
   const n = await rollDice($('dicePen'));
+  S.exId = exForFace(n); const ex = EXERCISES[S.exId];
   const r = $('penResult');
-  if(n >= 5){
-    r.innerHTML = '<span>🔄</span><span>Baling Semula!</span>';
-    void r.offsetWidth; r.classList.add('show'); say('Baling semula');
-    $('btnRollPen').disabled = false; return;
-  }
-  S.exId = n; const ex = EXERCISES[n];
   r.innerHTML = `<span>${ex.emo}</span><span>${ex.name}</span>`;
   void r.offsetWidth; r.classList.add('show');
   say(`${ex.name}, ${NUM_BM[S.repsNeeded]||S.repsNeeded} kali`);
@@ -696,35 +822,27 @@ function startExercise(){
   const ex = EXERCISES[S.exId];
   S.repsDone = 0;
   $('exName').textContent = ex.emo + ' ' + ex.name;
+  $('exTag').textContent = ex.tag;
   $('exEn').textContent = ex.en;
   $('exFig').innerHTML = FIGURES[S.exId]();
   $('exSteps').innerHTML = ex.steps.map(s=>`<li>${s}</li>`).join('');
   $('exSafety').textContent = ex.safety;
-  $('btnRep').hidden = false; $('btnRep').disabled = false; $('btnBack').hidden = true;
-  renderReps(); show('scrEx');
-}
-function renderReps(){
-  $('exCount').innerHTML = `${S.repsDone} <small>/ ${S.repsNeeded}</small>`;
-  $('exDots').innerHTML = Array.from({length:S.repsNeeded},(_,i)=>`<div class="dot ${i<S.repsDone?'f':''}"></div>`).join('');
+  $('exReps').textContent = `${S.repsNeeded} kali`;
+  $('btnRep').disabled = false;
+  show('scrEx');
+  say(`${ex.name}, ${NUM_BM[S.repsNeeded]||S.repsNeeded} kali`);
 }
 $('btnRep').addEventListener('click', async () => {
-  if(S.repsDone >= S.repsNeeded) return;
-  ac(); S.repsDone++; S.stats.reps++; S.stats.ex[S.exId]++; updateStats();
-  sfx.rep(); renderReps(); say(NUM_BM[S.repsDone] || String(S.repsDone));
-  if(S.repsDone >= S.repsNeeded){
-    S.stats.exSets[S.exId]++;
-    $('btnRep').disabled = true;
-    await wait(500);
-    sfx.done(); confetti(35); say('Bagus! Senaman selesai. Jom sambung ejaan');
-    $('btnRep').hidden = true; $('btnBack').hidden = false; $('btnBack').focus();
-  }
-});
-$('btnBack').addEventListener('click', () => {
+  ac(); $('btnRep').disabled = true;
+  S.stats.reps += S.repsNeeded; S.stats.ex[S.exId] = (S.stats.ex[S.exId]||0) + S.repsNeeded;
+  S.stats.exSets[S.exId] = (S.stats.exSets[S.exId]||0) + 1; updateStats();
+  sfx.done(); confetti(35); say('Bagus! Jom sambung ejaan');
+  await wait(1200);
   S.busy = false; renderWord(); setKeys(); show('scrWord');
   toast('Cuba semula huruf ini');
 });
 
-/* ================= STICK FIGURES (SVG + SMIL, berfungsi offline & Safari) ================= */
+/* ================= STICK FIGURES (SVG + SMIL) ================= */
 function fig(poses, dur, extras=''){
   const P = p => p.join(',');
   const vals = fn => poses.map(fn).join(';');
@@ -746,39 +864,60 @@ function fig(poses, dur, extras=''){
     <circle cx="${poses[0].head[0]}" cy="${poses[0].head[1]}" r="19" fill="#ffffff">${anim('cx',p=>p.head[0])}${anim('cy',p=>p.head[1])}</circle>
   </svg>`;
 }
+const mod = (base, o) => Object.assign({}, base, o);
 const STAND = { head:[110,40], sh:[110,74], hip:[110,142], hL:[92,138], hR:[128,138], eL:[98,108], eR:[122,108],
   kL:[106,196], aL:[106,246], tL:[124,246], kR:[114,196], aR:[114,246], tR:[132,246] };
-const mod = (base, o) => Object.assign({}, base, o);
+const CHAIR = `<g stroke="#ff8c1a" stroke-width="8" stroke-linecap="round" fill="none">
+  <line x1="38" y1="190" x2="100" y2="190"/><line x1="38" y1="190" x2="38" y2="110"/>
+  <line x1="42" y1="190" x2="42" y2="250"/><line x1="96" y1="190" x2="96" y2="250"/></g>`;
+const RAIL = `<g stroke="#ff8c1a" stroke-width="8" stroke-linecap="round"><line x1="160" y1="130" x2="205" y2="130"/><line x1="195" y1="130" x2="195" y2="250"/></g>`;
+const SIT = { head:[82,100], sh:[78,132], hip:[72,182], hL:[118,168], hR:[122,172], eL:[96,156], eR:[100,158],
+  kL:[124,184], aL:[124,246], tL:[142,246], kR:[130,186], aR:[130,246], tR:[148,246] };
+const LEAN = mod(SIT, { head:[112,112], sh:[104,138], hL:[132,170], hR:[136,172], eL:[118,156], eR:[120,158] });
+const UP = { head:[126,40], sh:[126,74], hip:[126,142], hL:[110,138], hR:[142,138], eL:[114,108], eR:[138,108],
+  kL:[124,196], aL:[124,246], tL:[142,246], kR:[130,196], aR:[130,246], tR:[148,246] };
+const crossArms = p => { const [x,y] = p.sh; return mod(p, { eL:[x-16,y+26], eR:[x+16,y+26], hL:[x+14,y+12], hR:[x-14,y+12] }); };
+const handsOnHips = p => mod(p, { eL:[p.sh[0]-26,p.sh[1]+36], hL:[p.hip[0]-10,p.hip[1]-4], eR:[p.sh[0]+26,p.sh[1]+36], hR:[p.hip[0]+10,p.hip[1]-4] });
+const RAIL_HAND = { hR:[160,132], eR:[140,112] };
+function heelUp(base, keep={}){
+  const up = {}; for(const k in base) up[k] = [base[k][0], base[k][1]-16];
+  Object.assign(up, { tL:base.tL, tR:base.tR, aL:[base.aL[0]-16,232], aR:[base.aR[0]-16,232] }, keep);
+  return up;
+}
+function marchPoses(base, high){
+  const kY = high ? 148 : 160, aY = high ? 200 : 210;
+  const liftL = mod(base, { kL:[146,kY], aL:[140,aY], tL:[158,aY+2] });
+  const liftR = mod(base, { kR:[150,kY+2], aR:[144,aY+2], tR:[162,aY+4] });
+  return [liftL, liftR];
+}
 const FIGURES = {
-  1: () => {
-    const chair = `<g stroke="#ff8c1a" stroke-width="8" stroke-linecap="round" fill="none">
-      <line x1="38" y1="190" x2="100" y2="190"/><line x1="38" y1="190" x2="38" y2="110"/>
-      <line x1="42" y1="190" x2="42" y2="250"/><line x1="96" y1="190" x2="96" y2="250"/></g>`;
-    const sit = { head:[82,100], sh:[78,132], hip:[72,182], hL:[118,168], hR:[122,172], eL:[96,156], eR:[100,158],
-      kL:[124,184], aL:[124,246], tL:[142,246], kR:[130,186], aR:[130,246], tR:[148,246] };
-    const lean = mod(sit, { head:[112,112], sh:[104,138], hL:[132,170], hR:[136,172], eL:[118,156], eR:[120,158] });
-    const up = { head:[126,40], sh:[126,74], hip:[126,142], hL:[110,138], hR:[142,138], eL:[114,108], eR:[138,108],
-      kL:[124,196], aL:[124,246], tL:[142,246], kR:[130,196], aR:[130,246], tR:[148,246] };
-    return fig([sit, lean, up, up, lean, sit, sit], 3.6, chair);
-  },
-  2: () => {
-    const rail = `<g stroke="#ff8c1a" stroke-width="8" stroke-linecap="round"><line x1="160" y1="130" x2="205" y2="130"/><line x1="195" y1="130" x2="195" y2="250"/></g>`;
-    const base = mod(STAND, { hR:[160,132], eR:[140,112] });
-    const sh = 16, up = {};
-    for(const k in base) up[k] = [base[k][0], base[k][1]-sh];
-    up.tL = [124,246]; up.tR = [132,246]; up.aL=[108,232]; up.aR=[116,232]; up.hR=[160,132]; up.eR=[140,100];
-    return fig([base, up, up, base, base], 2.6, rail);
-  },
-  3: () => {
-    const liftL = mod(STAND, { kL:[146,160], aL:[140,210], tL:[158,212], hR:[126,112], eR:[132,100], hL:[90,150] });
-    const liftR = mod(STAND, { kR:[150,162], aR:[144,212], tR:[162,214], hL:[96,112], eL:[90,100], hR:[130,150] });
-    return fig([STAND, liftL, STAND, liftR, STAND], 2.4);
-  },
-  4: () => {
+  ss_sup:  () => fig([SIT, LEAN, UP, UP, LEAN, SIT, SIT], 3.6, CHAIR),
+  ss_free: () => fig([SIT, LEAN, UP, UP, LEAN, SIT, SIT].map(crossArms), 3.6, CHAIR),
+  squat: () => {
     const base = mod(STAND, { hL:[96,140], hR:[124,140] });
     const down = { head:[128,94], sh:[118,124], hip:[82,184], hL:[172,124], hR:[172,132], eL:[146,124], eR:[146,130],
       kL:[132,196], aL:[106,246], tL:[124,246], kR:[138,200], aR:[114,246], tR:[132,246] };
     return fig([base, down, down, base, base], 3);
+  },
+  hr_sit: () => {
+    const up = mod(SIT, { kL:[124,170], aL:[124,232], kR:[130,172], aR:[130,232] });
+    return fig([SIT, up, up, SIT, SIT], 2.6, CHAIR);
+  },
+  hr_sup: () => { const base = mod(STAND, RAIL_HAND); return fig([base, heelUp(base, {hR:[160,132], eR:[140,100]}), heelUp(base, {hR:[160,132], eR:[140,100]}), base, base], 2.6, RAIL); },
+  hr_free: () => { const base = mod(STAND, { hL:[96,140], hR:[124,140] }); const up = heelUp(base); return fig([base, up, up, base, base], 2.6); },
+  hip_sup: () => {
+    const base = mod(STAND, RAIL_HAND); const [l, r] = marchPoses(base, false);
+    return fig([base, l, l, base, r, r, base], 4, RAIL);
+  },
+  hip_free: () => {
+    const base = handsOnHips(STAND); const [l, r] = marchPoses(base, false).map(handsOnHips);
+    return fig([base, l, l, base, r, r, base], 4);
+  },
+  hip_alt: () => {
+    const [l, r] = marchPoses(STAND, true);
+    const lA = mod(l, { hR:[126,112], eR:[132,100], hL:[90,150] });
+    const rA = mod(r, { hL:[96,112], eL:[90,100], hR:[130,150] });
+    return fig([STAND, lA, STAND, rA, STAND], 1.8);
   },
 };
 
@@ -786,14 +925,14 @@ const FIGURES = {
 function showSummary(){
   if('speechSynthesis' in window) try{ speechSynthesis.cancel(); }catch(e){}
   const st = S.stats; const mins = Math.max(0, Math.round((Date.now()-st.start)/60000));
-  const levelName = ['','Rendah','Sederhana','Tinggi'][S.level];
   $('sumGrid').innerHTML = [
     ['⭐', st.words, 'Perkataan siap'], ['❌', st.miss, 'Kesilapan'],
     ['💪', st.reps, 'Jumlah ulangan'], ['⏱️', mins + ' min', 'Tempoh sesi'],
   ].map(([e,v,k]) => `<div class="sum"><div class="v">${e} ${v}</div><div class="k">${k}</div></div>`).join('');
+  const ids = S.ab ? ABILITY[S.ab].ex : [];
   $('sumTable').innerHTML = `<tr><th>Senaman</th><th>Set</th><th>Ulangan</th></tr>` +
-    [1,2,3,4].map(i => `<tr><td>${EXERCISES[i].emo} ${EXERCISES[i].name}</td><td>${st.exSets[i]}</td><td>${st.ex[i]}</td></tr>`).join('') +
-    `<tr><td colspan="2">Tahap: ${S.level} (${levelName})</td><td>${st.list.length? st.list.join(', ') : '—'}</td></tr>`;
+    ids.map(id => `<tr><td>${EXERCISES[id].emo} ${EXERCISES[id].name} <small>(${EXERCISES[id].tag})</small></td><td>${st.exSets[id]||0}</td><td>${st.ex[id]||0}</td></tr>`).join('') +
+    `<tr><td colspan="2">Kognitif ${S.level} (${LEVELS[S.level]?.name||'—'}) · Keupayaan ${S.ab} (${ABILITY[S.ab]?.name||'—'})</td><td>${st.list.length? st.list.join(', ') : '—'}</td></tr>`;
   show('scrSum'); if(st.words) { sfx.win(); confetti(50); }
 }
 $('btnAgain').addEventListener('click', () => show('scrStart'));
@@ -810,7 +949,7 @@ $('btnFull').addEventListener('click', () => {
   if(!(d.fullscreenElement||d.webkitFullscreenElement)) { try{ const r=(el.requestFullscreen||el.webkitRequestFullscreen||(()=>{})).call(el); if(r&&r.catch) r.catch(()=>toast('Skrin penuh tidak disokong di sini')); }catch(e){} }
   else (d.exitFullscreen||d.webkitExitFullscreen||(()=>{})).call(d);
 });
-// Papan kekunci fizikal (untuk PC / remote TV dengan keyboard)
+// Papan kekunci fizikal (konsonan sahaja)
 document.addEventListener('keydown', e => {
   if(!$('scrWord').classList.contains('active') || e.ctrlKey || e.metaKey || e.altKey) return;
   const L = e.key.toUpperCase(); if(L.length!==1) return;
@@ -819,6 +958,7 @@ document.addEventListener('keydown', e => {
 });
 syncTools();
 })();
+
 </script>
 </body>
 </html>
